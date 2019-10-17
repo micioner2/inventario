@@ -1,0 +1,21 @@
+body {
+    margin: 0px; 
+    padding: 0;
+}
+
+.zona_impresion{
+    width: 260px;
+    padding:0;
+}
+
+
+.cabecera{
+    width:100%;
+}
+
+.cabecera .titulo_primario{
+    text-align:center;
+    font-family: Impact, "Arial Black", Arial, Verdana, sans-serif;
+    font-size: smaller;
+    font-weight: 300;
+}

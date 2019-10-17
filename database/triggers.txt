@@ -1,0 +1,46 @@
+DELIMITER //
+CREATE TRIGGER tr_updStockVenta AFTER INSERT ON  detalle_ventas
+FOR EACH ROW BEGIN
+    UPDATE productos SET stock = stock - NEW.cantidad
+    WHERE productos.id = NEW.idproducto;
+    END
+// DELIMITER ;
+
+
+
+DELIMITER //
+CREATE TRIGGER tr_updStockIngreso AFTER INSERT ON  detalle_ingresos
+FOR EACH ROW BEGIN
+    UPDATE productos SET stock = stock + NEW.cantidad
+    WHERE productos.id = NEW.idproducto;
+    END
+// DELIMITER ;
+
+
+
+
+DELIMITER //
+CREATE TRIGGER tr_updStockAnularIngreso after update on ingresos for each row 
+begin
+  update productos p
+    join detalle_ingresos di
+      on di.idproducto = p.id
+     and di.idingreso = new.id
+     set p.stock = p.stock - di.cantidad;
+end;
+//
+DELIMITER ;
+
+
+
+DELIMITER //
+CREATE TRIGGER tr_updStockAnularVenta after update on ventas for each row 
+begin
+  update productos p
+    join detalle_ventas dv
+      on dv.idproducto = p.id
+     and dv.idventa = new.id
+     set p.stock = p.stock + dv.cantidad;
+end;
+//
+DELIMITER ;
