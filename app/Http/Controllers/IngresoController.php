@@ -19,7 +19,7 @@ class IngresoController extends Controller
         $criterio = $request->criterio;
         
         if ($buscar==''){
-            $ingresos = Ingreso::join('personas','ingresos.idproveedor','=','personas.id')
+            $ingresos = Ingreso::join('personas','ingresos.idpersona','=','personas.id')
             ->join('users','ingresos.idusuario','=','users.id')
             ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.serie_comprobante',
             'ingresos.numero_comprobante','ingresos.created_at as fecha','ingresos.total',
@@ -27,7 +27,7 @@ class IngresoController extends Controller
             ->orderBy('ingresos.id', 'desc')->paginate(10);
         }
         else{
-            $ingresos = Ingreso::join('personas','ingresos.idproveedor','=','personas.id')
+            $ingresos = Ingreso::join('personas','ingresos.idpersona','=','personas.id')
             ->join('users','ingresos.idusuario','=','users.id')
             ->select('ingresos.id','ingresos.tipo_comprobante','ingresos.serie_comprobante',
             'ingresos.numero_comprobante','ingresos.created_at as fecha','ingresos.total',
@@ -54,7 +54,7 @@ class IngresoController extends Controller
             DB::beginTransaction();
 
             $ingreso = new Ingreso();
-            $ingreso->idproveedor = $request->idproveedor;
+            $ingreso->idpersona = $request->idpersona;
             $ingreso->idusuario = \Auth::user()->id;
             $ingreso->tipo_comprobante = $request->tipo_comprobante;
             $ingreso->serie_comprobante = $request->serie_comprobante;
@@ -96,7 +96,7 @@ class IngresoController extends Controller
 
         $id = $request->id;
 
-        $ingreso = Ingreso::join('personas','ingresos.idproveedor','=','personas.id')
+        $ingreso = Ingreso::join('personas','ingresos.idpersona','=','personas.id')
         ->join('users','ingresos.idusuario','=','users.id')
         ->select('ingresos.id','ingresos.tipo_comprobante',
         'ingresos.numero_comprobante','ingresos.created_at as fecha','ingresos.total',

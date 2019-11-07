@@ -131,7 +131,7 @@
         </div>
 
         <!--DETALLE VENTA -->
-        <div class="modal fade" id="modal-detalle">
+        <div class="modal fade" id="modal-detalle"  role="dialog" style="overflow-y: scroll;">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header modales">
@@ -179,19 +179,19 @@
                                             <label>CLIENTE</label>
                                             <div class="input-group">
                                                 <span class="input-group-btn">
-                                                    <button class="btn btn-primary" @click="opcionModalCLiente = 1" data-toggle="modal" data-target="#modalCliente" title="Nuevo Cliente"><i class="fa fa-user-plus"></i></button>
+                                                    <button class="btn btn-primary" @click="opcionCliente = 1"  data-toggle="modal" data-target="#modalCliente" title="Nuevo Cliente" data-backdrop="static" data-keyboard="false"><i class="fa fa-user-plus"></i></button>
                                                 </span>
-                                                <!-- <span class="input-group-addon" style="width:0px; padding-left:0px; padding-right:0px; border:none;"></span> -->
-                                                <select class="form-control col-md-3 select2"  style="width: 100%;" id="idcliente"  v-if="tipo_comprobante =='BOLETA' ">
+                                                
+                                                <select class="form-control col-md-3 select2"  style="width: 100%;" id="idpersona"  v-if="tipo_comprobante =='BOLETA' ">
                                                     <option v-for="proveedor in filtrarClientes"  :key="proveedor.id" :value="proveedor.id" v-text="proveedor.num_documento +' - '+ proveedor.nombre" ></option>
                                                 </select>
 
-                                                <select class="form-control col-md-3 select2"  style="width: 100%;" id="idcliente" v-else>
+                                                <select class="form-control col-md-3 select2"  style="width: 100%;" id="idpersona" v-else>
                                                     <option  v-for="proveedor in filtrarClientes"  :key="proveedor.id" :value="proveedor.id" v-text="proveedor.num_documento +' - '+ proveedor.razon_social"></option>
                                                 </select>
                                             </div>
                                           
-                                            <ModalCliente :enlace="enlace" v-if="opcionModalCLiente" :opcion="0" /> 
+                                            <ModalCliente v-if="opcionCliente"  :enlace="enlace" /> 
                                            
                                         </div>
                                     </div>
@@ -297,7 +297,7 @@
 
 
         <div class="modal fade" id="modal-comprobante">
-            <div class="modal-dialog  modal-sm">
+            <div class="modal-dialog  modal-md">
                 <div class="modal-content">
                     <div class="modal-header modales">
                         <h4 class="modal-title">Tipo de impresiones</h4>
@@ -368,7 +368,7 @@ export default {
             cantidad:0,
             stock:'',
 
-            opcionModalCLiente: 0
+            opcionCliente: 0
         }
     },
 
@@ -448,6 +448,8 @@ export default {
             if (!this.clientes.length) {
                 this.listarCliente();
             }
+            
+            $('.select2').select2()
         },
 
         encuentra(id){
@@ -725,7 +727,7 @@ export default {
                     const url = me.enlace+'/venta';
                             
                     axios.post(url,{
-                        'idcliente': $("#idcliente").val(),
+                        'idcliente': $("#idpersona").val(),
                         'tipo_comprobante': me.tipo_comprobante,
                         'serie_comprobante' : me.serie_comprobante,
                         'numero_comprobante' : me.numero_comprobante,
@@ -773,7 +775,8 @@ export default {
             })
 
         },
-  
+
+      
     },
 
     created(){
@@ -822,7 +825,7 @@ export default {
     }
 
     .cabecera{
-         background: #4875CA;
+        background: #08BDAF;
         color: #fff;
     }
 </style>

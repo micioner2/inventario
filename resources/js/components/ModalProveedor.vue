@@ -1,13 +1,13 @@
 <template>
     <!-- MODAL CLIENTE -->
-    <div class="modal fade" role="dialog" style="overflow-y: scroll;" id="modalCliente" >
+    <div class="modal fade" id="modalCliente">
         <div class="modal-dialog">
             <div class="modal-content">
 
                 <div class="modal-header">
                     <button type="button" class="close" @click="cerrarModal()">
                     <span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Registrar Cliente</h4>
+                    <h4 class="modal-title">Registrar Proveedor</h4>
                 </div>
 
                 <div class="modal-body">
@@ -20,35 +20,28 @@
                                     <div class="form-group">
                                         <label >Tipo Doc. Identidad  </label>
                                         <select  class="form-control" v-model="cliente.tipo_documento">
-                                            <option value="DNI">DNI</option>
                                             <option value="RUC">RUC</option>
                                         </select>                    
                                     </div>
                                 </div>
 
                                 
-                               <div class="col-lg-6">
+                                <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Numero<span style="color:red;" v-show="encontrarCliente.length">    (Cliente ya existe) </span></label>
+                                          <label>Numero<span style="color:red;"  v-show="encontrarProveedor.length">    (Proveedor ya existe) </span></label>
                                         <div class="input-group">
-                                            <input type="number" class="form-control" v-model="cliente.num_documento" v-show="cliente.tipo_documento=='DNI'"   maxlength="8" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" @keyup.enter="traerNombre()">
-                                            <input type="number" class="form-control" v-model="cliente.num_documento" v-show="cliente.tipo_documento=='RUC'"   maxlength="11" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" @keyup.enter="traerNombre()">
+                                            <!-- <input type="number" class="form-control"   maxlength="8" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" @keyup.enter="traerNombre()"> -->
+                                            <input type="number" class="form-control" v-model="cliente.num_documento"   maxlength="11" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" @keyup.enter="traerNombre()">
                                             <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button" @click="traerNombre()"><i class="fa fa-search"></i></button>
+                                                <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
                                             </span>
                                         </div>
                                     </div>
                                 </div>
 
-                              
-                                <div class="col-md-12" v-show="cliente.tipo_documento=='DNI'">
-                                    <div class="form-group">
-                                        <label>Nombre</label>
-                                        <input type="text" class="form-control" v-model="cliente.nombre"   @input="cliente.nombre = $event.target.value.toUpperCase()">
-                                    </div>
-                                </div>
 
-                                <div class="col-md-12" v-show="cliente.tipo_documento=='RUC'">
+                                            
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Razón Social</label>
                                         <input type="text" class="form-control" v-model="cliente.razon_social"  @input="cliente.razon_social = $event.target.value.toUpperCase()">
@@ -76,11 +69,11 @@
                                     </div>
                                 </div>
 
-                                <div v-show="errorCliente" class="form-group row div-error">
+                                <div v-show="errorProveedor" class="form-group row div-error">
                                     <div class="col-md-12">
                                         <div class="alert alert-danger alert-dismissible" role="alert">
                                             <ul>
-                                                <li v-for="error in errorMostrarMsjCliente" :key="error" v-text="error"></li>
+                                                <li v-for="error in errorMostrarMsjProveedor" :key="error" v-text="error"></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -89,12 +82,26 @@
                             </div>
                         </div>
                     </form>
+
+                   
+
+
+                    <!-- <div class="col-md-12" v-if="tipo_documento == 'DNI'">
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" class="form-control"  v-model="cliente.nombre"  @input="cliente.nombre = $event.target.value.toUpperCase()">
+                        </div>
+                    </div> -->
+
+
+                    
+                
     
                 </div>
                 <div class="modal-footer">
                     <div class="form-group">
                         <button type="button" class="btn btn-default pull-left" @click="cerrarModal()">Cerrar</button>
-                        <button type="submit" class="btn btn-primary pull-right" style="margin-right:30px;" @click="registrarCliente()">Registrar</button>
+                        <button type="submit" class="btn btn-primary pull-right" @click="registrarProveedor()">Registrar</button>
                     </div>
                 </div>
             </div>
@@ -108,10 +115,11 @@ import {mapState,mapActions} from 'vuex'
         props:['enlace'],
         data(){
             return {
+                
                 cliente: {
                     id:0,
-                    tipo_persona:'Cliente',
-                    tipo_documento:'DNI',
+                    tipo_persona:'Proveedor',
+                    tipo_documento:'RUC',
                     num_documento:'',
                     nombre:'',
                     razon_social:'',
@@ -119,54 +127,36 @@ import {mapState,mapActions} from 'vuex'
                     telefono:'',
                     direccion:'',
                 },
-                errorMostrarMsjCliente:[],
-                errorCliente:0
+                errorMostrarMsjProveedor:[],
+                errorProveedor:0
 
             }
         },
         computed:{
 
-            filtrarCliente(){   
+            filtrarProveedor(){   
                 let me = this;
-                return me.clientes.filter(cliente => {
-                    return  cliente.num_documento;
+                return me.proveedores.filter(proveedor => {
+                    return  proveedor.num_documento;
                 });
             },
 
-             encontrarCliente(){
+             encontrarProveedor(){
                 let me = this;
-                return  me.filtrarCliente.filter(i => i.num_documento === me.cliente.num_documento);
+                return  me.filtrarProveedor.filter(i => i.num_documento === me.cliente.num_documento);
             },
 
-             ...mapState(['clientes'])
+             ...mapState(['proveedores'])
 
 
         },
-
         methods:{
-            ...mapActions(['listarCliente']),
+            ...mapActions(['listarProveedor']),
             
-         
-        traerNombre(){
-            let me = this;
-            let url = ''
-            if (me.cliente.tipo_documento == 'DNI') {
-
-                if (me.cliente.num_documento.length >= 8) {
-                    url = me.enlace+'/consultardni?dni='+me.cliente.num_documento+''
-                    axios.get(url).then((res) =>{
-                        if (res.data.estado) {
-                            me.cliente.nombre = res.data.nombres +' ' +res.data.apellidos;
-                            me.cliente.direccion = res.data.departamento
-                        }else{
-                            me.cliente.nombre = ''
-                            me.cliente.direccion = ''
-                        }
-                    })
-                }
-             
-            }else{
-                
+            traerNombre(){
+                let me = this;
+                let url = ''
+    
                 if (me.cliente.num_documento.length >= 11) {
                     url = me.enlace+'/consultarruc?ruc='+me.cliente.num_documento+''
                     axios.get(url).then((res) =>{
@@ -180,35 +170,33 @@ import {mapState,mapActions} from 'vuex'
                         }
                     })
                 }
-      
-            }
-        },
+            },
             
 
-            validarCliente(){
+              validarProveedor(){
                 let me = this;
-                me.errorCliente=0;
-                me.errorMostrarMsjCliente =[];
+                me.errorProveedor=0;
+                me.errorMostrarMsjProveedor =[];
                 $(".alert-danger").fadeTo(2000, 3000).slideUp(3000, function(){
                     $(".alert-danger").slideUp(3000);
                 });
-                if (me.encontrarCliente.length) me.errorMostrarMsjCliente.push("El cliente ya existe.");
-                if (me.cliente.num_documento.length < 11 && me.cliente.tipo_documento == 'RUC') me.errorMostrarMsjCliente.push("El número debe de tener 11 dígitos.");
-                if (!me.cliente.razon_social && me.cliente.tipo_documento == 'RUC') me.errorMostrarMsjCliente.push("El campo Razón Social no debe de estar nulo.");
-                if (me.errorMostrarMsjCliente.length) me.errorCliente = 1;
-                return me.errorCliente;      
+                if (me.encontrarProveedor.length) me.errorMostrarMsjProveedor.push("El proveedor ya existe.");
+                if (me.cliente.num_documento.length < 11 && me.cliente.tipo_documento == 'RUC') me.errorMostrarMsjProveedor.push("El número debe de tener 11 dígitos.");
+                if (!me.cliente.razon_social && me.cliente.tipo_documento == 'RUC') me.errorMostrarMsjProveedor.push("El campo Razón Social no debe de estar nulo.");
+                if (me.errorMostrarMsjProveedor.length) me.errorProveedor = 1;
+                return me.errorProveedor;      
             },
 
-            registrarCliente(){
+            registrarProveedor(){
                 let me = this;
                 let url = me.enlace+'/persona';
 
-                if (me.validarCliente()) {
+                if (me.validarProveedor()) {
                     return
                 }
 
                 swal({
-                    title: 'Está seguro registrar este cliente?',
+                    title: 'Está seguro registrar este proveedor?',
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -224,7 +212,7 @@ import {mapState,mapActions} from 'vuex'
                                 
                     axios.post(url, me.cliente).then((res) =>{
                         $('#modalCliente').modal('hide');
-                        me.listarCliente();
+                        me.listarProveedor();
                     })
 
                 }})
@@ -240,3 +228,8 @@ import {mapState,mapActions} from 'vuex'
     }
 </script>
 
+<style>
+
+
+
+</style>

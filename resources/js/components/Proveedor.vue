@@ -1,18 +1,17 @@
 <template>
-
     <div class="box box-primary">
         <div class="box-header with-border">
-            <i class="fa fa-align-justify"></i>Proveedores &nbsp; &nbsp;
-            <button class="btn btn-primary" @click="abrirModal('registrar','')" data-toggle="modal" data-target="#modalProveedor" data-backdrop="static" data-keyboard="false"><i class="fa fa-plus"></i>&nbsp;&nbsp;Nuevo</button>
+            <i class="fa fa-align-justify"></i>Proveedor &nbsp; &nbsp;
+            <button class="btn btn-primary" @click="abrirModal('registrar','')" data-toggle="modal" data-target="#modalCliente" data-backdrop="static" data-keyboard="false"><i class="fa fa-plus"></i>&nbsp;&nbsp;Nuevo</button>
         </div>
         <div class="box-body table-responsive">
-            <table class="table table-hover table-striped" id="tablaProveedor">
+
+            <table class="table table-hover table-striped" id="tablaCliente">
                 <thead>
                     <tr>
                         <th>Opciones</th>
                         <th>Tipo Documento</th>
                         <th>Número</th>
-                        <th>Nombre</th>
                         <th>Razón Social</th>
                         <th>Dirección</th>
                         <th>Teléfono</th>
@@ -21,39 +20,38 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="proveedor in filtrarProveedor" :key="proveedor.id" >
+                    <tr v-for="cliente in filtrarCliente" :key="cliente.id" >
                         <td>
-                            <button class="btn btn-primary btn-xs" @click="abrirModal('',proveedor)"  data-toggle="modal" data-target="#modalProveedor" data-backdrop="static" data-keyboard="false"><i class="fa fa-pencil"></i></button>&nbsp;&nbsp;
+                            <button class="btn btn-primary btn-xs" @click="abrirModal('',cliente)"  data-toggle="modal" data-target="#modalCliente" data-backdrop="static" data-keyboard="false"><i class="fa fa-pencil"></i></button>&nbsp;&nbsp;
+                            <button class="btn btn-danger btn-xs" @click="actualizarCliente(cliente)" v-if="cliente.estado"><i class="fa fa-trash"></i></button> 
+                                <button class="btn btn-success btn-xs" @click="actualizarCliente(cliente)" v-else><i class="fa fa-check"></i></button> 
                         </td>
-                        <td v-text="proveedor.tipo_documento"></td>
-                        <td v-text="proveedor.num_documento"></td>
-                        <td v-text="proveedor.nombre"></td>
-                        <td v-text="proveedor.razon_social"></td>
-                        <td v-text="proveedor.direccion"></td>
-                        <td v-text="proveedor.telefono"></td>
-                        <td v-text="proveedor.correo"></td>
-                        <td><span v-text="proveedor.estado?'Acitvo':'Desactivado'" :class="proveedor.estado?'label label-primary':'label label-danger'"></span></td>
+                        <td v-text="cliente.tipo_documento"></td>
+                        <td v-text="cliente.num_documento"></td>
+                        <td v-text="cliente.razon_social"></td>
+                        <td v-text="cliente.direccion"></td>
+                        <td v-text="cliente.telefono"></td>
+                        <td v-text="cliente.correo"></td>
+                        <td><span v-text="cliente.estado?'Acitvo':'Desactivado'" :class="cliente.estado?'label label-primary':'label label-danger'"></span></td>
                     </tr>
                 </tbody>
             </table>
         </div>
-         
 
-        <div class="modal fade" id="modalProveedor">
+        <div class="modal fade" id="modalCliente" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Registrar Proveedor</h4>
+                        <h4 class="modal-title" v-text="tituloModal"></h4>
                     </div>
                         <div class="modal-body">
-                            
+
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label >Tipo Doc. Identidad  </label>
-                                    <select  class="form-control" v-model="proveedor.tipo_documento" :disabled="!opcionModal">
-                                        <option value="DNI">DNI</option>
+                                    <select  class="form-control" v-model="cliente.tipo_documento" :disabled="!opcionModal">
                                         <option value="RUC">RUC</option>
                                     </select>                    
                                 </div>
@@ -61,10 +59,9 @@
 
                             <div class="col-lg-6">
                                 <div class="form-group">
-                                    <label>Numero<span style="color:red;" v-if="opcionModal" v-show="encontrarProveedor.length">    (proveedor ya existe) </span></label>
+                                    <label>Numero<span style="color:red;" v-if="opcionModal" v-show="encontrarCliente.length">    (Cliente ya existe) </span></label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" :disabled="!opcionModal"  v-model="proveedor.num_documento" v-show="proveedor.tipo_documento=='DNI'"   maxlength="8" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" @keyup.enter="traerNombre()">
-                                        <input type="number" class="form-control" :disabled="!opcionModal"  v-model="proveedor.num_documento" v-show="proveedor.tipo_documento=='RUC'"   maxlength="11" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" @keyup.enter="traerNombre()">
+                                        <input type="number" class="form-control" :disabled="!opcionModal"  v-model="cliente.num_documento"  maxlength="11" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" @keyup.enter="traerNombre()">
                                         <span class="input-group-btn">
                                             <button class="btn btn-default" type="button" @click="traerNombre()"><i class="fa fa-search"></i></button>
                                         </span>
@@ -72,40 +69,40 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-12" v-show="cliente.tipo_documento=='DNI'">
                                 <div class="form-group">
                                     <label>Nombre</label>
-                                    <input type="text" class="form-control" v-model="proveedor.nombre"  @input="proveedor.nombre = $event.target.value.toUpperCase()">
+                                    <input type="text" class="form-control" v-model="cliente.nombre"   @input="cliente.nombre = $event.target.value.toUpperCase()">
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-12" v-show="cliente.tipo_documento=='RUC'">
                                 <div class="form-group">
                                     <label>Razón Social</label>
-                                    <input type="text" class="form-control" v-model="proveedor.razon_social"  @input="proveedor.razon_social = $event.target.value.toUpperCase()">
+                                    <input type="text" class="form-control" v-model="cliente.razon_social"  @input="cliente.razon_social = $event.target.value.toUpperCase()">
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Correo</label>
-                                    <input type="text" class="form-control" v-model="proveedor.correo">
+                                    <input type="text" class="form-control" v-model="cliente.correo">
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Teléfono</label>
-                                    <input type="text" class="form-control" v-model="proveedor.telefono">
+                                    <input type="text" class="form-control" v-model="cliente.telefono">
                                 </div>
                             </div>
 
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Dirección</label>
-                                    <input type="text" class="form-control" v-model="proveedor.direccion">
+                                    <input type="text" class="form-control" v-model="cliente.direccion"  @input="cliente.direccion = $event.target.value.toUpperCase()">
                                 </div>
-                            </div> 
+                            </div>
 
                             <div v-show="errorCliente" class="form-group row div-error">
                                 <div class="col-lg-12">
@@ -115,19 +112,21 @@
                                         </ul>
                                     </div>
                                 </div>
-                            </div> 
+                            </div>
 
+                  
                         </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary pull-right" v-if="opcionModal" @click="registrarProveedor()">Registrar</button>
-                        <button type="submit" class="btn btn-primary pull-right" v-else @click="editarProveedor()">Editar</button>
-                    </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary pull-right" v-if="opcionModal" @click="registrarProveedor()">Registrar</button>
+                            <button type="submit" class="btn btn-primary pull-right" v-else @click="editarCliente()">Editar</button>
+                        </div>
                 </div>
             </div>
         </div>
- 
-    </div>
+                
+    </div>      
+
 </template>
 
 <script>
@@ -137,11 +136,13 @@ export default {
 
     data(){
         return{
-            proveedores:[],
+            clientes:[],
+            inputCliente:'',
 
-            proveedor: {
+            cliente: {
+                tipo_persona:'Proveedor',
                 id:0,
-                tipo_documento:'DNI',
+                tipo_documento:'RUC',
                 num_documento:'',
                 nombre:'',
                 razon_social:'',
@@ -149,7 +150,7 @@ export default {
                 telefono:'',
                 direccion:'',
             },
-
+            tituloModal:'',
             opcionModal: 1,
             errorCliente: 0,
             errorMostrarMsjCliente: []
@@ -158,28 +159,27 @@ export default {
 
     computed:{
 
-        filtrarProveedor(){
+        filtrarCliente(){
             let me = this;
-            return me.proveedores.filter(proveedor => {
-                return  proveedor;
+            return me.clientes.filter(cliente => {
+                return  cliente.num_documento;
             });
         },
 
-        encontrarProveedor(){
+        encontrarCliente(){
             let me = this;
-            return  me.filtrarProveedor.filter(i => i.num_documento === me.proveedor.num_documento);
-           
+            return  me.filtrarCliente.filter(i => i.num_documento === me.cliente.num_documento);
         }
     },
 
     methods:{
 
-        listarProveedor(){
+        listarCliente(){
             let me = this;
-                let url = me.enlace+'/proveedor';
+                let url = me.enlace+'/persona/proveedor';
             axios.get(url).then((res) => {
-                me.proveedores = res.data.proveedor;
-                if (me.proveedores.length) {
+                me.clientes = res.data.proveedor;
+                if (me.clientes.length) {
                     me.myTable();
                 }
             });
@@ -189,50 +189,50 @@ export default {
         abrirModal(accion, data = []) {
             let me = this;
             if (accion == 'registrar') {
-                me.proveedor.nombre = "";
-                me.proveedor.tipo_documento ="DNI";
-                me.proveedor.num_documento = "";
-                me.proveedor.razon_social = "";
-                me.proveedor.telefono = "";
-                me.proveedor.correo = "";
-                me.proveedor.direccion = "";
+                me.cliente.nombre = "";
+                me.cliente.tipo_documento ="RUC";
+                me.cliente.num_documento = "";
+                me.cliente.razon_social = "";
+                me.cliente.telefono = "";
+                me.cliente.correo = "";
+                me.cliente.direccion = "";
                 me.opcionModal = 1;
+                me.tituloModal = 'Registrar Proveedor'
             } else {
  
-                me.proveedor.nombre = data.nombre;
-                me.proveedor.tipo_documento = data.tipo_documento;
-                me.proveedor.num_documento  = data.num_documento;
-                me.proveedor.razon_social = data.razon_social;
-                me.proveedor.telefono = data.telefono;
-                me.proveedor.correo = data.correo;
-                me.proveedor.direccion = data.direccion;
-                me.proveedor.id = data.id;
+                me.cliente.nombre = data.nombre;
+                me.cliente.tipo_documento = data.tipo_documento;
+                me.cliente.num_documento  = data.num_documento;
+                me.cliente.razon_social = data.razon_social;
+                me.cliente.telefono = data.telefono;
+                me.cliente.correo = data.correo;
+                me.cliente.direccion = data.direccion;
+                me.cliente.id = data.id;
                 me.opcionModal = 0;
+                me.tituloModal = 'Editar Proveedor'
             }
         },
 
-
         validarCliente(){
-            let me = this;
-            me.errorCliente=0;
-            me.errorMostrarMsjCliente =[];
-            $(".alert-danger").fadeTo(2000, 3000).slideUp(3000, function(){
-                $(".alert-danger").slideUp(3000);
-            });
+                let me = this;
+                me.errorCliente=0;
+                me.errorMostrarMsjCliente =[];
+                $(".alert-danger").fadeTo(2000, 3000).slideUp(3000, function(){
+                    $(".alert-danger").slideUp(3000);
+                });
 
-            if (me.encontrarProveedor.length && me.opcionModal) me.errorMostrarMsjCliente.push("El cliente ya existe.");
-            if (me.proveedor.num_documento.length < 8 && me.proveedor.tipo_documento == 'DNI') me.errorMostrarMsjCliente.push("El número debe de tener 8 dígitos.");
-            if (me.proveedor.num_documento.length < 11 && me.proveedor.tipo_documento == 'RUC') me.errorMostrarMsjCliente.push("El número debe de tener 11 dígitos.");
-            if (!me.proveedor.nombre && me.proveedor.tipo_documento == 'DNI') me.errorMostrarMsjCliente.push("El campo nombre no debe de estar nulo.");
-            if (!me.proveedor.razon_social && me.proveedor.tipo_documento == 'RUC') me.errorMostrarMsjCliente.push("El campo Razón Social no debe de estar nulo.");
-            if (me.errorMostrarMsjCliente.length) me.errorCliente = 1;
-            return me.errorCliente;
+                if (me.encontrarCliente.length && me.opcionModal) me.errorMostrarMsjCliente.push("El proveedor ya existe.");
+                if (me.cliente.num_documento.length < 8 && me.cliente.tipo_documento == 'DNI') me.errorMostrarMsjCliente.push("El número debe de tener 8 dígitos.");
+                if (!me.cliente.nombre && me.cliente.tipo_documento == 'DNI') me.errorMostrarMsjCliente.push("El campo nombre no debe de estar nulo.");
+                if (!me.cliente.razon_social && me.cliente.tipo_documento == 'RUC') me.errorMostrarMsjCliente.push("El campo Razón Social no debe de estar nulo.");
+                if (me.errorMostrarMsjCliente.length) me.errorCliente = 1;
+                return me.errorCliente;
             
         },
 
         registrarProveedor(){
             let me = this;
-            let url = me.enlace+'/proveedor';
+            let url = me.enlace+'/persona';
 
             if (me.validarCliente()) {
                 return
@@ -253,60 +253,78 @@ export default {
             }).then((result) => {
                 if (result.value) {
                             
-                axios.post(url, me.proveedor).then((res) =>{
-                    $('#modalProveedor').modal('hide')
-                    $('#tablaProveedor').DataTable().destroy();
-                    me.listarProveedor();
+                axios.post(url, me.cliente).then((res) =>{
+                    $('#modalCliente').modal('hide')
+                    $('#tablaCliente').DataTable().destroy();
+                    me.listarCliente();
                 })
 
             }});
+               
         },
 
-        editarProveedor(){
+        editarCliente(){
             let me = this;
-            const url = me.enlace+ '/proveedor';
+
+            if (me.validarCliente()) {
+                return
+            }
+
+            const url = me.enlace+ '/persona';
             axios.put(url,{
-                'nombre': me.proveedor.nombre,
-                'razon_social': me.proveedor.razon_social,
-                'correo': me.proveedor.correo,
-                'telefono': me.proveedor.telefono,
-                'direccion': me.proveedor.direccion,
-                'id':me.proveedor.id
+                'tipo_persona':'Cliente',
+                'nombre': me.cliente.nombre,
+                'razon_social': me.cliente.razon_social,
+                'correo': me.cliente.correo,
+                'telefono': me.cliente.telefono,
+                'direccion': me.cliente.direccion,
+                'id':me.cliente.id
 
             }).then((res) => {
                 swal({
                     type: "success",
                     title: "Éxito...",
-                    text: "proveedor registrado!"
+                    text: "Cliente registrado!"
                 });
                 $("[data-dismiss=modal]").trigger({ type: "click" });
-                $('#tablaProveedor').DataTable().destroy();
-                me.listarProveedor();
+                $('#tablaCliente').DataTable().destroy();
+                me.listarCliente();
             });
         },
 
+        actualizarCliente(data){
+            let me = this;
+            const url = (me.enlace+'/persona/estado');
+            axios.put(url, {
+                estado: data.estado,
+                id: data.id
+                }).then(function(response) {
+                    swal({
+                        type: "success",
+                        title: "Éxito...",
+                        text: "Estado actualizado!"
+                    });
+                    $("[data-dismiss=modal]").trigger({ type: "click" });
+                    me.listarCliente();
+                });
+                
+        },
 
         traerNombre(){
             let me = this;
-            const url = me.enlace+'/cliente/consultarnombre?num_documento='+me.proveedor.num_documento+'&tipo_documento='+me.proveedor.tipo_documento;
+            const url = me.enlace+'/persona/consultarnombre?num_documento='+me.cliente.num_documento+'&tipo_documento='+me.cliente.tipo_documento;
             axios.get(url).then((res) =>{
-                if (me.proveedor.tipo_documento == "DNI") { 
-
-                    if (me.proveedor.num_documento.length >= 8) {
-                        me.proveedor.nombre = res.data;
-                    }
-                }else{
-
-                    if (me.proveedor.num_documento.length >=11) {
-                        me.proveedor.razon_social = res.data.razon_social;
-                    }
+             
+                if (me.cliente.num_documento.length >=11) {
+                    me.cliente.razon_social = res.data.razon_social;
                 }
+            
             })
         },
 
         myTable(){
             this.$nextTick(() =>{
-                $("#tablaProveedor").DataTable({
+                $("#tablaCliente").DataTable({
 
                     "deferRender": true,
                     "retrieve": true,
@@ -343,7 +361,7 @@ export default {
     },
 
     mounted(){
-        this.listarProveedor();
+        this.listarCliente();
     }
     
 }

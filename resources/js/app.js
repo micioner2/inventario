@@ -25,7 +25,7 @@ const app = new Vue({
     el: '#app',
     store,
     data :{
-        menu: 7,
+        menu: 3,
         // enlace: 'http://www.panaderiadorita.com'
         enlace: 'http://192.168.1.34:8080/inventario/public'
         // enlace: 'http://localhost:8080/inventario/public/'

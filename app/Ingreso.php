@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Ingreso extends Model
 {
     protected $fillable = [
-        'idproveedor', 
+        'idpersona', 
         'idusuario',
         'tipo_comprobante',
         'serie_comprobante',
@@ -22,10 +22,7 @@ class Ingreso extends Model
     {
         return $this->belongsTo('App\User');
     }
-    public function proveedor()
-    {
-        return $this->belongsTo('App\Proveedor');
-    }
+
 }
 
 

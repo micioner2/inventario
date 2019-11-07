@@ -46,7 +46,7 @@
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Registrar Cliente</h4>
+                        <h4 class="modal-title" v-text="tituloModal"></h4>
                     </div>
                         <div class="modal-body">
 
@@ -73,14 +73,14 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-12" v-show="cliente.tipo_documento=='DNI'">
                                 <div class="form-group">
                                     <label>Nombre</label>
-                                    <input type="text" class="form-control" v-model="cliente.nombre"  @input="cliente.nombre = $event.target.value.toUpperCase()">
+                                    <input type="text" class="form-control" v-model="cliente.nombre"   @input="cliente.nombre = $event.target.value.toUpperCase()">
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-12" v-show="cliente.tipo_documento=='RUC'">
                                 <div class="form-group">
                                     <label>Razón Social</label>
                                     <input type="text" class="form-control" v-model="cliente.razon_social"  @input="cliente.razon_social = $event.target.value.toUpperCase()">
@@ -144,6 +144,7 @@ export default {
             inputCliente:'',
 
             cliente: {
+                tipo_persona:'Cliente',
                 id:0,
                 tipo_documento:'DNI',
                 num_documento:'',
@@ -155,6 +156,7 @@ export default {
             },
 
             opcionModal: 1,
+            tituloModal:'',
             errorCliente: 0,
             errorMostrarMsjCliente: []
         }
@@ -179,7 +181,7 @@ export default {
 
         listarCliente(){
             let me = this;
-                let url = me.enlace+'/cliente';
+                let url = me.enlace+'/persona/cliente';
             axios.get(url).then((res) => {
                 me.clientes = res.data.cliente;
                 if (me.clientes.length) {
@@ -200,6 +202,7 @@ export default {
                 me.cliente.correo = "";
                 me.cliente.direccion = "";
                 me.opcionModal = 1;
+                  me.tituloModal = 'Registrar Cliente'
             } else {
  
                 me.cliente.nombre = data.nombre;
@@ -211,6 +214,7 @@ export default {
                 me.cliente.direccion = data.direccion;
                 me.cliente.id = data.id;
                 me.opcionModal = 0;
+                me.tituloModal = 'Editar Cliente'
             }
         },
 
@@ -234,7 +238,7 @@ export default {
 
         registrarCliente(){
             let me = this;
-            let url = me.enlace+'/cliente';
+            let url = me.enlace+'/persona';
 
             if (me.validarCliente()) {
                 return
@@ -272,8 +276,9 @@ export default {
                 return
             }
 
-            const url = me.enlace+ '/cliente';
+            const url = me.enlace+ '/persona';
             axios.put(url,{
+                'tipo_persona':'Cliente',
                 'nombre': me.cliente.nombre,
                 'razon_social': me.cliente.razon_social,
                 'correo': me.cliente.correo,
@@ -295,7 +300,7 @@ export default {
 
         actualizarCliente(data){
             let me = this;
-            const url = (me.enlace+'/cliente/estado');
+            const url = (me.enlace+'/persona/estado');
             axios.put(url, {
                 estado: data.estado,
                 id: data.id
@@ -313,20 +318,39 @@ export default {
 
         traerNombre(){
             let me = this;
-            const url = me.enlace+'/cliente/consultarnombre?num_documento='+me.cliente.num_documento+'&tipo_documento='+me.cliente.tipo_documento;
-            axios.get(url).then((res) =>{
-                if (me.cliente.tipo_documento == "DNI") { 
+            let url = ''
+            if (me.cliente.tipo_documento == 'DNI') {
 
-                    if (me.cliente.num_documento.length >= 8) {
-                        me.cliente.nombre = res.data;
-                    }
-                }else{
-
-                    if (me.cliente.num_documento.length >=11) {
-                        me.cliente.razon_social = res.data.razon_social;
-                    }
+                if (me.cliente.num_documento.length >= 8) {
+                    url = me.enlace+'/consultardni?dni='+me.cliente.num_documento+''
+                    axios.get(url).then((res) =>{
+                        if (res.data.estado) {
+                            me.cliente.nombre = res.data.nombres +' ' +res.data.apellidos;
+                            me.cliente.direccion = res.data.departamento
+                        }else{
+                            me.cliente.nombre = ''
+                            me.cliente.direccion = ''
+                        }
+                    })
                 }
-            })
+             
+            }else{
+                
+                if (me.cliente.num_documento.length >= 11) {
+                    url = me.enlace+'/consultarruc?ruc='+me.cliente.num_documento+''
+                    axios.get(url).then((res) =>{
+
+                        if (res.data.success) {
+                            me.cliente.razon_social = res.data.nombre_o_razon_social
+                            me.cliente.direccion = res.data.direccion
+                        }else{
+                            me.cliente.razon_social = ''
+                            me.cliente.direccion = ''
+                        }
+                    })
+                }
+      
+            }
         },
 
         myTable(){

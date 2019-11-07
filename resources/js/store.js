@@ -26,7 +26,7 @@ export default {
 
         listarCliente({commit}){
             const clientes = []
-            axios.get('cliente/listarCbo').then((resp)=>{
+            axios.get('persona/cliente').then((resp)=>{
                let cliente = resp.data.cliente; 
                cliente.map(i =>{
                     clientes.push(i);
@@ -39,7 +39,7 @@ export default {
         
         listarProveedor({commit}){
             const proveedores = []
-            axios.get('proveedor/listarCbo').then((resp)=>{
+            axios.get('persona/proveedor').then((resp)=>{
                let cliente = resp.data.proveedor; 
                cliente.map(i =>{
                     proveedores.push(i);

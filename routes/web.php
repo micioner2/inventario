@@ -41,21 +41,15 @@ Route::put('producto/estado','ProductoController@update');
 Route::get('producto/listarPdf','ProductoController@listarPdf')->name('productos_pdf');
 
 
-// Proveedor
-Route::get('proveedor','ProveedorController@index');
-Route::post('proveedor','ProveedorController@store');
-Route::put('proveedor','ProveedorController@edit');
-Route::get('proveedor/listarCbo','ProveedorController@listarCbo');
 
 
-
-// Cliente
-Route::get('cliente','ClienteController@index');
-Route::post('cliente','ClienteController@store');
-Route::put('cliente','ClienteController@edit');
-Route::put('cliente/estado','ClienteController@update');
-Route::get('cliente/listarCbo','ClienteController@listarCbo');
-Route::get('cliente/consultarnombre','ClienteController@consultaApiSunat');
+// Persona
+Route::get('persona/cliente','PersonaController@listClientes');
+Route::get('persona/proveedor','PersonaController@listProveedores');
+Route::post('persona','PersonaController@store');
+Route::put('persona','PersonaController@edit');
+Route::put('persona/estado','PersonaController@update');
+Route::get('persona/consultarnombre','PersonaController@consultaApiSunat');
 
 
 //Venta
@@ -92,3 +86,7 @@ Route::get('reporte/sinStockProducto','ReporteController@listarProductosSinStock
 Route::get('empresa','EmpresaController@index');
 Route::post('empresa/registrar','EmpresaController@store');
 Route::post('empresa/editar','EmpresaController@edit');
+
+
+Route::get('/consultardni', 'PersonaController@buscarDni');
+Route::get('/consultarruc', 'PersonaController@buscarRuc');

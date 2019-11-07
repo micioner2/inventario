@@ -27,13 +27,13 @@
   
       <li class="header">MENU</li>
 
-      <li class="active" @click="menu=0">
+      <li :class="menu == 0 ?'active':''" @click="menu=0">
           <a href="#">
               <i class="fa fa-home"></i> <span>Inicio</span>
           </a>
       </li>
 
-      <li class="treeview">
+      <li class="treeview" :class="menu == 5 ?'active':''">
           <a href="#">
               <i class="fa fa-shopping-cart"></i> <span>Inventario</span>
               <span class="pull-right-container">
@@ -41,11 +41,11 @@
               </span>
           </a>
           <ul class="treeview-menu">
-            <li @click="menu=5"><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>Categorias / Productos</span></a></li>
+            <li  @click="menu=5"><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>Categorias / Productos</span></a></li>
           </ul>
       </li>
 
-      <li class="treeview">
+      <li class="treeview" :class="menu == 1 || menu == 2 || menu == 3 || menu == 4 ?'active':''">
           <a href="#">
               <i class="fa fa-users"></i> <span>Usuarios</span>
               <span class="pull-right-container">
@@ -61,9 +61,10 @@
       </li>
 
 
-      <li @click="menu=6"><a href="#"><i class="fa fa-circle-o text-blue"></i> <span>Compras</span></a></li>
-      <li @click="menu=7"><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Ventas</span></a></li>
-      <li class="treeview">
+      <li :class="menu == 6 ?'active':''"  @click="menu=6"><a href="#"><i class="fa fa-circle-o text-blue"></i> <span>Compras</span></a></li>
+      <li :class="menu == 7 ?'active':''" @click="menu=7"><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Ventas</span></a></li>
+
+      <li :class="menu == 8 || menu == 9 ?'active':''" class="treeview">
           <a href="#">
               <i class="fa fa-inbox"></i> <span>Administar</span>
               <span class="pull-right-container">

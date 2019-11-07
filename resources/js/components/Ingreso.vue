@@ -136,10 +136,10 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>PROVEEDOR</label>
-                                    <select class="form-control select2"  style="width: 100%;" id="idproveedor">
+                                    <select class="form-control select2" style="width: 100%;" id="idpersona">
                                         <option  v-for="proveedor in filtrarProveedores" :key="proveedor.id" :value="proveedor.id" v-text="proveedor.num_documento +' - '+ proveedor.razon_social"></option>
                                     </select>
-                                    <ModalCliente :enlace="enlace" :opcion="1" v-if="opcionModalCLiente" /> 
+                                    <ModalProveedor :enlace="enlace"  v-if="opcionModalCLiente" /> 
                                     <button class="btn btn-primary btn-xs pull-left" @click="opcionModalCLiente = 1" data-toggle="modal" data-target="#modalCliente" title="Nuevo Cliente"><i class="fa fa-user-plus"></i></button>
                                 </div>
                             </div>
@@ -242,10 +242,11 @@
 <script>
 
 import {mapState,mapActions} from 'vuex'
-import ModalCliente from './ModalCliente.vue';
+import ModalProveedor from './ModalProveedor';
+
 export default {
     props:['enlace'],
-    components: {ModalCliente},
+    components: {ModalProveedor},
     data(){
         return{
             productos:[],
@@ -298,18 +299,16 @@ export default {
             return resultado;
         },
 
-        ...mapState(['proveedores']),
-
-        filtrarProveedores:function(){
-            let tipo_documento = '';
+         filtrarProveedores:function(){
             let me = this;
             if (me.proveedores.length) {
                 $('.select2').select2()
             }
-            if (me.tipo_comprobante == 'FACTURA') {
-                return this.proveedores.filter(i => i.tipo_documento != 'DNI')
-            }
-        }
+             return this.proveedores.filter(i => i.tipo_documento != 'DNI')
+        },
+
+        ...mapState(['proveedores']),
+
 
     },
     methods:{
@@ -321,7 +320,6 @@ export default {
                 me.productos = res.data.producto;
             });
         },
-
 
         ...mapActions(['listarProveedor']),
 
@@ -339,7 +337,7 @@ export default {
             this.arrayDetalle.splice(index,1);
         },
 
-         buscarProducto(){
+        buscarProducto(){
             let me = this;
             let arrayProductos =[];
             const url = me.enlace+'/producto/buscarProductoIngreso?filtro='+me.codigo;
@@ -508,8 +506,6 @@ export default {
             return num;
         },
 
-
-
         registrarIngreso(){
 
             swal({
@@ -530,7 +526,7 @@ export default {
                     const url = me.enlace+'/ingreso';
                             
                     axios.post(url,{
-                        'idproveedor': $("#idproveedor").val(),
+                        'idpersona': $("#idpersona").val(),
                         'tipo_comprobante': me.tipo_comprobante,
                         'serie_comprobante': me.serie_comprobante,
                         'numero_comprobante' : me.numero_comprobante,

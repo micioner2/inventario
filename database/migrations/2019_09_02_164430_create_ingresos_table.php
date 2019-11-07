@@ -15,8 +15,8 @@ class CreateIngresosTable extends Migration
     {
         Schema::create('ingresos', function (Blueprint $table) {
             $table->Increments('id');
-            $table->integer('idproveedor')->unsigned();
-            $table->foreign('idproveedor')->references('id')->on('proveedores');
+            $table->integer('idpersona')->unsigned();
+            $table->foreign('idpersona')->references('id')->on('personas');
             $table->integer('idusuario')->unsigned();
             $table->foreign('idusuario')->references('id')->on('users');
             $table->enum('tipo_comprobante',['BOLETA','FACTURA']);
